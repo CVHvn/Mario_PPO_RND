@@ -1,0 +1,10 @@
+torch
+numpy
+matplotlib
+gymnasium==0.29.1
+gym-super-mario-bros==7.4.0
+gym==0.25.2
+imageio-ffmpeg
+imageio
+torchvision
+opencv-python-headless
