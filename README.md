@@ -5,6 +5,37 @@ Playing Super Mario Bros with Proximal Policy Optimization (PPO) and Random Netw
 
 My PyTorch Proximal Policy Optimization (PPO) + Random Network Distillation (RND) implement to playing Super Mario Bros. There are [PPO paper](https://arxiv.org/abs/1707.06347) and [RND paper](https://arxiv.org/abs/1810.12894).
 <p align="center">
+  <img src="demo/gif/1-1.gif" width="200">
+  <img src="demo/gif/1-2.gif" width="200">
+  <img src="demo/gif/1-3.gif" width="200">
+  <img src="demo/gif/1-4.gif" width="200"><br/>
+  <img src="demo/gif/2-1.gif" width="200">
+  <img src="demo/gif/2-2.gif" width="200">
+  <img src="demo/gif/2-3.gif" width="200">
+  <img src="demo/gif/2-4.gif" width="200"><br/>
+  <img src="demo/gif/3-1.gif" width="200">
+  <img src="demo/gif/3-2.gif" width="200">
+  <img src="demo/gif/3-3.gif" width="200">
+  <img src="demo/gif/3-4.gif" width="200"><br/>
+  <img src="demo/gif/4-1.gif" width="200">
+  <img src="demo/gif/4-2.gif" width="200">
+  <img src="demo/gif/4-3.gif" width="200">
+  <img src="demo/gif/4-4.gif" width="200"><br/>
+  <img src="demo/gif/5-1.gif" width="200">
+  <img src="demo/gif/5-2.gif" width="200">
+  <img src="demo/gif/5-3.gif" width="200">
+  <img src="demo/gif/5-4.gif" width="200"><br/>
+  <img src="demo/gif/6-1.gif" width="200">
+  <img src="demo/gif/6-2.gif" width="200">
+  <img src="demo/gif/6-3.gif" width="200">
+  <img src="demo/gif/6-4.gif" width="200"><br/>
+  <img src="demo/gif/7-1.gif" width="200">
+  <img src="demo/gif/7-2.gif" width="200">
+  <img src="demo/gif/7-3.gif" width="200">
+  <img src="demo/gif/7-4.gif" width="200"><br/>
+  <img src="demo/gif/8-1.gif" width="200">
+  <img src="demo/gif/8-2.gif" width="200">
+  <img src="demo/gif/8-3.gif" width="200">
   <img src="demo/gif/8-4.gif" width="200"><br/>
   <i>Results</i>
 </p>
