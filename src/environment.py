@@ -92,7 +92,7 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
 
     def step(self, action):
         state, reward, done, trunc, info = self.env.step(action)
-        
+
         if (info['x_pos'] - self.current_x) == 0:
             self.current_x_count += 1
         else:
@@ -135,16 +135,16 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
             if info["x_pos"] >= 3675 and info["x_pos"] <= 3700:
                 done = True
                 reward -= 50
-                
+
             if info["x_pos"] < self.max_x - 200:
                 if self.max_x >= 1250 and self.max_x <= 1310: #solved bug because x_pos duplicated
                     if info["x_pos"] >= 320:
                         done = True
                         reward = -50
-                elif info["x_pos"] == 312:
+                elif info["x_pos"] >= 312-5 and info["x_pos"] <= 312+5:
                     done = True
                     reward = -50
-                elif info["x_pos"] == 56 and self.max_x > 3650 and self.sea_map == False:
+                elif info["x_pos"] >= 56-5 and info["x_pos"] <= 56-5 and self.max_x > 3650 and self.sea_map == False:
                     reward += 50
                     self.sea_map = True
             if info["x_pos"] > self.max_x + 100:
