@@ -10,8 +10,8 @@ class Model(nn.Module):
         self.conv3 = nn.Conv2d(32, 32, 3, stride=2, padding=1)
         self.conv4 = nn.Conv2d(32, 32, 3, stride=2, padding=1)
         self.linear = nn.Linear(1152, 512)
-        self.int_critic = nn.Linear(512, 1)
-        self.ext_critic = nn.Linear(512, 1)
+        self.in_critic = nn.Linear(512, 1)
+        self.ex_critic = nn.Linear(512, 1)
         self.actor_linear = nn.Linear(512, output_dim)
 
     def forward(self, x):
@@ -21,7 +21,7 @@ class Model(nn.Module):
         x = F.relu(self.conv4(x))
         x = x.view(x.size(0), -1)
         x = self.linear(x)
-        return self.actor_linear(x), self.ext_critic(x), self.int_critic(x)
+        return self.actor_linear(x), self.ex_critic(x), self.in_critic(x)
 
 class Feature_Model(nn.Module):
     def __init__(self, input_dim, output_dim):

@@ -74,6 +74,7 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
         super(CustomRewardAndDoneEnv, self).__init__(env)
         self.current_score = 0
         self.current_x = 0
+        self.old_x = -1
         self.current_x_count = 0
         self.max_x = 0
         self.world = world
@@ -84,6 +85,7 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
     def reset(self, **kwargs):
         self.current_score = 0
         self.current_x = 0
+        self.old_x = -1
         self.current_x_count = 0
         self.max_x = 0
         if self.world == 8 and self.stage == 4:
@@ -120,7 +122,7 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
         if self.world == 4 and self.stage == 4:
             if (info["x_pos"] <= 1500 and info["y_pos"] < 127) or (
                     1588 <= info["x_pos"] < 2380 and info["y_pos"] >= 127):
-                reward = -50
+                reward -= 50
                 done = True
             if done == False and info["x_pos"] < self.max_x - 100:
                 done = True
@@ -137,14 +139,16 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
                 reward -= 50
 
             if info["x_pos"] < self.max_x - 200:
-                if self.max_x >= 1250 and self.max_x <= 1310: #solved bug because x_pos duplicated
+                if self.max_x >= 1240 and self.max_x <= 1310: #solved bug because x_pos duplicated
                     if info["x_pos"] >= 320:
                         done = True
-                        reward = -50
-                elif info["x_pos"] >= 312-5 and info["x_pos"] <= 312+5:
+                        reward -= 50
+
+            if info["x_pos"] < self.old_x - 200:
+                if info["x_pos"] >= 312-5 and info["x_pos"] <= 312+5:
                     done = True
-                    reward = -50
-                elif info["x_pos"] >= 56-5 and info["x_pos"] <= 56-5 and self.max_x > 3650 and self.sea_map == False:
+                    reward -= 50
+                elif info["x_pos"] >= 56-5 and info["x_pos"] <= 56+5 and self.max_x > 3645 and self.sea_map == False:
                     reward += 50
                     self.sea_map = True
             if info["x_pos"] > self.max_x + 100:
@@ -153,6 +157,7 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
                 reward -= 0.1
         self.max_x = max(self.max_x, self.current_x)
         self.current_score = info["score"]
+        self.old_x = self.current_x
 
         return state, reward / 10., done, trunc, info
     
