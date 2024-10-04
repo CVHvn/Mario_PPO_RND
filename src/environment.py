@@ -70,7 +70,7 @@ class NoopResetEnv(gym.Wrapper):
         return obs, reward, done, trunk, info
 
 class CustomRewardAndDoneEnv(gym.Wrapper):
-    def __init__(self, env=None, world=1, stage=1):
+    def __init__(self, env=None, world=1, stage=1, additional_bonus_state_8_4_option = "no"):
         super(CustomRewardAndDoneEnv, self).__init__(env)
         self.current_score = 0
         self.current_x = 0
@@ -81,6 +81,7 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
         self.stage = stage
         if self.world == 8 and self.stage == 4:
             self.sea_map = False
+            self.additional_bonus_state_8_4_option = additional_bonus_state_8_4_option
 
     def reset(self, **kwargs):
         self.current_score = 0
@@ -149,10 +150,12 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
                     done = True
                     reward -= 50
                 elif info["x_pos"] >= 56-5 and info["x_pos"] <= 56+5 and self.max_x > 3645 and self.sea_map == False:
-                    reward += 50
+                    if self.additional_bonus_state_8_4_option == 'right_pipe':
+                        reward += 50
                     self.sea_map = True
-            if info["x_pos"] > self.max_x + 100:
-                reward += 50
+            if self.additional_bonus_state_8_4_option == 'right_pipe':
+                if info["x_pos"] > self.max_x + 100:
+                    reward += 50
             if done == False:
                 reward -= 0.1
         self.max_x = max(self.max_x, self.current_x)
@@ -161,7 +164,8 @@ class CustomRewardAndDoneEnv(gym.Wrapper):
 
         return state, reward / 10., done, trunc, info
     
-def create_env(world, stage, action_type, test=False):
+#modify from https://github.com/uvipen/Super-mario-bros-PPO-pytorch/blob/master/src/env.py
+def create_env(world, stage, action_type, additional_bonus_state_8_4_option, test=False):
     if gym.__version__ < '0.26':
         env = gym_super_mario_bros.make(f"SuperMarioBros-{world}-{stage}-v0", new_step_api=True)
     else:
@@ -179,7 +183,7 @@ def create_env(world, stage, action_type, test=False):
     if test == False:
         env = NoopResetEnv(env)
     env = SkipFrame(env, skip=4)
-    env = CustomRewardAndDoneEnv(env, world, stage)
+    env = CustomRewardAndDoneEnv(env, world, stage, additional_bonus_state_8_4_option)
     env = GrayScaleResizeObservation(env, shape=84)
     if gym.__version__ < '0.26':
         env = FrameStack(env, num_stack=4, new_step_api=True)
@@ -188,9 +192,9 @@ def create_env(world, stage, action_type, test=False):
     return env
 
 class MultipleEnvironments:
-    def __init__(self, world, stage, action_type, num_envs):
+    def __init__(self, world, stage, action_type, num_envs, additional_bonus_state_8_4_option):
         self.agent_conns, self.env_conns = zip(*[mp.Pipe(duplex=True) for _ in range(num_envs)])
-        self.envs = [create_env(world, stage, action_type) for _ in range(num_envs)]
+        self.envs = [create_env(world, stage, action_type, additional_bonus_state_8_4_option) for _ in range(num_envs)]
 
         for index in range(num_envs):
             process = mp.Process(target=self.run, args=(index,))

@@ -46,15 +46,17 @@ def get_args():
     parser.add_argument("--state_dim", type=tuple, default=(4, 84, 84))
 
     parser.add_argument("--save_dir", type=str, default="")
+    parser.add_argument("--use_layer_init", type=bool, default=False, help = 'Use layer init or not')
+    parser.add_argument("--additional_bonus_state_8_4_option", type=str, default="no", help = 'Option to add more bonus reward for state 8-4, this value can set to no (Do not add more reward), right_pipe (Add +50 bonus reward when Mario go to right pipe)')
     args = parser.parse_args()
     return args
 
 
 def train(config):
-    envs = MultipleEnvironments(config.world, config.stage, config.action_type, config.num_envs)
-    model = Model(config.state_dim, config.action_dim)
-    target_model = Target_Model(config.state_dim, config.action_dim)
-    predict_model = Feature_Model(config.state_dim, config.action_dim)
+    envs = MultipleEnvironments(config.world, config.stage, config.action_type, config.num_envs, config.additional_bonus_state_8_4_option)
+    model = Model(config.state_dim, config.action_dim, config.use_layer_init)
+    target_model = Target_Model(config.state_dim, config.action_dim, config.use_layer_init)
+    predict_model = Feature_Model(config.state_dim, config.action_dim, config.use_layer_init)
     agent = Agent(envs = envs, world = config.world, stage = config.stage, action_type = config.action_type, num_envs = config.num_envs, 
               state_dim = config.state_dim, action_dim = config.action_dim, save_dir = config.save_dir,
               save_model_step = config.save_model_step, save_figure_step = config.save_figure_step, learn_step = config.learn_step,

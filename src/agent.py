@@ -36,7 +36,7 @@ class Agent():
                  save_figure_step, learn_step, total_step_or_episode, total_step, total_episode, model,
                  target_model, predict_model, gamma, gamma_int, learning_rate, entropy_coef, V_coef, max_grad_norm,
                  clip_param, batch_size, num_epoch, is_normalize_advantage, V_loss_type, target_kl, gae_lambda, int_adv_coef,
-                 ext_adv_coef, device):
+                 ext_adv_coef, additional_bonus_state_8_4_option, device):
         self.world = world
         self.stage = stage
         self.action_type = action_type
@@ -87,6 +87,7 @@ class Agent():
         self.gae_lambda = gae_lambda
         self.int_adv_coef = int_adv_coef
         self.ext_adv_coef = ext_adv_coef
+        self.additional_bonus_state_8_4_option = additional_bonus_state_8_4_option
 
         # I just log 1000 lastest update and print it to log.
         self.V_loss = np.zeros((1000,)).reshape(-1)
@@ -104,7 +105,7 @@ class Agent():
         # test current model and save model/figure if model yield best total rewards.
         # create env for testing, reset test env
         if self.env is None:
-            self.env = create_env(self.world, self.stage, self.action_type, True)
+            self.env = create_env(self.world, self.stage, self.action_type, self.additional_bonus_state_8_4_option, True)
         state = self.env.reset()
         done = False
 
