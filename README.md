@@ -173,4 +173,4 @@ With my code, I can completed all 32/32 stages of Super Mario Bros. This code in
 * [lazyprogrammer A2C](https://github.com/lazyprogrammer/machine_learning_examples/tree/master/rl3/a2c)
 * [jcwleo RND](https://github.com/jcwleo/random-network-distillation-pytorch/blob/master/utils.py)
 * [DI-engine RND](https://opendilab.github.io/DI-engine/12_policies/rnd.html)
-* [vwxyzjn cleanrl/ppo_rnd_envpool.py](ttps://github.com/vwxyzjn/cleanrl/blob/master/cleanrl/ppo_rnd_envpool.py)
+* [vwxyzjn cleanrl](ttps://github.com/vwxyzjn/cleanrl/blob/master/cleanrl/ppo_rnd_envpool.py)
