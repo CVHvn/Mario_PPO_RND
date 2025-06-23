@@ -153,6 +153,35 @@ How I Find Hyperparameters for Each Stage:
   - Personally, I feel it doesn't help other stages and slows down the training speed. 
   - RND adds many hyperparameters making it difficult to choose hyperparameters. But we all know that hyperparameters greatly affect RL.
 
+## Discussion
+
+* About Hyperparameters
+
+  - **Learning rate scheduler**: I tried using a linear learning rate scheduler, but if the learning rate decreases before the agent explores enough, the agent will not learn anything due to the low learning rate. Therefore, I decided not to use it. One way to make the learning rate scheduler effective is to increase the number of training steps, but that requires a lot of time and resources.
+
+  - **Entropy coefficient**: When I experimented with other algorithms, I found that the entropy coefficient is an important parameter. Only a high entropy value (e.g., 0.05) helped the agent solve level 8-4. However, high entropy slows down training and can even cause the agent to get stuck in a suboptimal policy (sometimes the agent gets through the hardest part to explore at stage 8-4, but takes forever to complete the rest because of high entropy. I often have to train more steps to complete even though the later parts are easier). I believe we need a good way to schedule the entropy coefficient (or automatically adjust it). Some people use a linear scheduler, but like with the learning rate, if we reduce it too soon—before the agent has explored enough—it can lead to a poor policy. One solution is to train for more steps (e.g., 10 million or more), but that's expensive. Another trick is to manually reduce the entropy coefficient (e.g., to 0.01) after the agent passes a difficult point (like the pipe in 8-4 or the loop in 4-4). But this approach treats the environment and makes it artificially easier.
+
+  - **Update proportion**: This is an important parameter. If we set it too high (\~1), RND will overfit (all states will have the same intrinsic reward). If we set it too low (< 0.01), RND may become too random or fail to learn properly, which slows down training because the RND model doesn’t receive enough updates.
+
+* Reward System
+
+  - Reward scaling can have a big impact on training. A good scaling strategy helps the agent learn better, but requires a lot of tuning. We could try scaling the reward to ranges like \[-1, 1] or \[-5, 5]. However, I currently don’t have enough resources to tune the reward system.
+
+* One Agent for All Stages
+
+  - I tried training one agent to play 32 stages using three setups:
+  
+    - **32 environments (1 per stage)**: The agent learned very slowly and I had to stop training. It could only win a few easier stages.
+    - **128 environments (4 per stage)**: The agent was able to complete all the easy stages at different points in time. I remember it could complete 26/32 stages, but not all at the same time. At any given time, it could complete a maximum of 13/32 stages. It couldn’t beat any hard stages (like 1-3, 5-3, 4-4, 8-4), even during training with random moves.
+    - **Increased number of environments for hard stages**: This helped the agent complete more hard stages, but it slowed down learning on the easier ones. Even then, the agent couldn’t complete more multiple stages at once.
+  
+  - **My conclusions**:
+  
+    - We need more training steps to complete more stages.
+    - We might need to try stronger algorithms like MuZero.
+    - We might also need better strategies, such as continuing learning: completing stages one by one. It could help to start with harder stages (like 8-4 or 5-3) because the agent will find it easier to complete the easier ones later.
+
+
 ## Requirements
 
 * **python 3>3.6**
