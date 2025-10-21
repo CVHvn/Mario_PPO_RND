@@ -93,7 +93,11 @@ How I Find Hyperparameters for Each Stage:
   - I randomly tuned entropy_coef between 0.01 and 0.05 (I don’t have enough evidence about the effect of this hyperparameter).
 - Note: 
   - RL is very sensitive to hyperparameters, and some hyperparameters work for certain stages but not for others. Therefore, we need custom hyperparameters for some difficult stages like 5-3, 7-2, 8-1, and 8-4. I don’t have enough time and resources to find optimal hyperparameters that can complete all stages.
-  - I use min-max scaling for instrinsic reward because running mean std not working with me.
+  - I use min-max scaling for instrinsic reward because divide by running std of intrinsic return as original paper not working with me:
+    - I find some reason that make original normalization poor performance:
+      - Initially, the intrinsic reward is very large, running std will be affected (very large). The intrinsic reward will decrease very strongly (usually from 1, 2 digits to 0.0x or 0.00x). The way to calculate running mean std will update mean and std very slowly, making the scaling intrinsic reward very small (because the running std is divided too large). It will take many steps for running mean std to actually return to a level that matches the intrinsic reward (0.0x or 0.00x), so the initial training time is almost wasted (intrinsic reward is too small or meaningless), even making the model learn poorly due to noisy rewards. --> I found that only updating and scaling intrinsic rewards after a few epochs worked (maybe after 10 learning steps).
+      - I didn't initialize the network initially (default initialization by Pytorch), as mentioned in the DRND project, not initializing will make the RND output significantly smaller than the suggested model initialization. This may affect the results. --> you can try again (i don't have enough resources and found min-max scaling very good)
+    - In some newer research and projects I read (including what I tried), scaling by dividing the running std of the intrinsic reward instead of its return works better (still only update the running std and scale after the first few training epochs to avoid noise) --> min-max-scale and dividing running std of the intrinsic reward both work well and depending on the algorithm generating the intrinsic reward and the environment will give different results --> you can try.
 
 | World | Stage | num_envs | learn_step | batchsize | epoch | lambda | gamma | gamma_int | learning_rate | target_kl | clip_param | max_grad_norm | update_proportion  | norm_adv | int_adv_coef | ext_adv_coef | V_coef | entropy_coef | loss_type | training_step | training_time |
 |-------|-------|----------|------------|-----------|-------|--------|-------|-----------|---------------|-----------|------------|---------------|--------|----------|--------------|--------------|--------|--------------|-----------|---------------|---------------|
@@ -166,6 +170,11 @@ How I Find Hyperparameters for Each Stage:
 * Reward System
 
   - Reward scaling can have a big impact on training. A good scaling strategy helps the agent learn better, but requires a lot of tuning. We could try scaling the reward to ranges like \[-1, 1] or \[-5, 5]. However, I currently don’t have enough resources to tune the reward system.
+  - Intrinsic reward scaling have a big impact on training. Without normalize, RND almost doesn't work because the output is too small. As mentioned above, there are 3 ways: min-max scaling, dividing the running std of the intrinsic reward, and dividing the running std of the intrinsic return:
+    - In this project, I use min-max scaling because it works.
+    - Dividing the running std of the intrinsic return doesn't work well (I tried).
+    - Dividing the running std of the intrinsic reward might work well (I haven't tried).
+    - However, if you want to use running std (both ways), you need to be careful in updating and dividing (you should refer to other RND projects or test it yourself), if you divide the running std from the beginning, the algorithm will be quite bad.
 
 * One Agent for All Stages
 
