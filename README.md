@@ -175,6 +175,7 @@ How I Find Hyperparameters for Each Stage:
     - Dividing the running std of the intrinsic return doesn't work well (I tried).
     - Dividing the running std of the intrinsic reward might work well (I haven't tried).
     - However, if you want to use running std (both ways), you need to be careful in updating and dividing (you should refer to other RND projects or test it yourself), if you divide the running std from the beginning, the algorithm will be quite bad.
+    - Note that we should only divide running std instead of subtracting mean before dividing std because subtracting mean will give a negative reward and may distort the value you want to convey from the intrinsic reward (instead of adding points to novel states and doing nothing to frequent states, it may make the policy stay away from frequent states because the intrinsic reward of frequent states after subtracting mean will be negative). However, this way can work, you can try!
 
 * One Agent for All Stages
 
